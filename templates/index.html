@@ -5,22 +5,6 @@
     <title>Title</title>
 </head>
 <body>
-{% load cache %}
-
-
-{% for category in page_obj%}
-    {% cache 5000 cat %}
-            <h3>{{category.name}} </h3><br>
-    {% endcache %}
-    {% for product in category.product.all %}
-        {% cache 5000 prod product.id%}
-         <h4>{{product.name}}</h4><br>
-        {% endcache %}
-            {{product.price}}  {{product.status}}   {{product.remains}}<br>
-    {% endfor %}
-
-{% endfor %}
-
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -38,6 +22,14 @@
         {% endif %}
     </span>
 </div>
+
+
+<h2>Category Name {{ category_name }}</h2>
+{% for product in page_obj %}
+    <h4> Product Name {{product.name}}</h4>
+    Price {{product.price}} Status {{product.status}}  Remains {{product.remains}}<br>
+{% endfor %}
+
 
 </body>
 </html>

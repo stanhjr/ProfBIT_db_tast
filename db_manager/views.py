@@ -1,34 +1,23 @@
 import time
-
-from django.template import RequestContext
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.core.cache import cache
-from django.db import connection
-from django.core.cache.utils import make_template_fragment_key
-from db_manager.models import Product, Category
+from db_manager.models import Category, Product
 
 
-class MyView(View):
+class CategoryView(View):
     http_method_names = ['get', ]
 
     def get(self, request, *args, **kwargs):
-        cat = make_template_fragment_key('cat')
-        # prod = make_template_fragment_key('prod', [username])
-        print(cache.get('prod'))
-
-
-        # print(prod)
-        # cache.delete(key)  # invalidates cached template fragment
-        print(request.GET.get('foot '))
-        print(request.GET)
-        print(args)
-        print(kwargs)
+        pk = self.kwargs.get('pk')
         time.sleep(2)
-        category = Category.objects.all()
-        paginator = Paginator(category, 50)
+        product = Product.objects.filter(category_id=pk).all()
+        if not product:
+            return redirect('category-url', pk='1')
+
+        category_name = Category.objects.get(id=pk).name
+        paginator = Paginator(product, 50)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'index.html', {'page_obj': page_obj})
+        return render(request, 'index.html', {'page_obj': page_obj, 'category_name': category_name})
 
